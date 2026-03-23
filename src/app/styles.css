@@ -1,0 +1,359 @@
+:root {
+  color-scheme: light;
+  font-family: "Segoe UI", "Trebuchet MS", sans-serif;
+  line-height: 1.4;
+  font-weight: 400;
+  color: #1f170f;
+  background:
+    radial-gradient(circle at top left, rgba(244, 217, 167, 0.7), transparent 28%),
+    radial-gradient(circle at top right, rgba(159, 34, 34, 0.18), transparent 24%),
+    linear-gradient(180deg, #f3efe2 0%, #ddd2b9 100%);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  --panel-bg: rgba(255, 249, 237, 0.84);
+  --panel-border: rgba(80, 47, 23, 0.12);
+  --accent: #9f2222;
+  --accent-strong: #7d1919;
+  --ink-soft: #6c5844;
+  --shadow: 0 18px 48px rgba(72, 39, 20, 0.12);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+.page-shell {
+  width: min(100%, 48rem);
+  margin: 0 auto;
+  padding: 1rem 1rem 3rem;
+}
+
+.hero {
+  padding: 1.5rem 0 1rem;
+}
+
+.eyebrow {
+  margin: 0 0 0.4rem;
+  color: var(--accent);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.hero h1 {
+  margin: 0;
+  font-size: clamp(2.1rem, 8vw, 3.8rem);
+  line-height: 0.95;
+}
+
+.hero-copy {
+  max-width: 34rem;
+  margin: 0.8rem 0 0;
+  color: var(--ink-soft);
+}
+
+.panel {
+  margin-top: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--panel-border);
+  border-radius: 1.25rem;
+  background: var(--panel-bg);
+  backdrop-filter: blur(18px);
+  box-shadow: var(--shadow);
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.action-row {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.panel-header h2 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.panel-meta {
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+}
+
+.ghost-button {
+  border: 1px solid rgba(31, 23, 15, 0.12);
+  border-radius: 999px;
+  background: transparent;
+  padding: 0.45rem 0.8rem;
+}
+
+.danger-button {
+  color: var(--accent-strong);
+}
+
+.counter-grid {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.counter-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.9rem 1rem;
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.counter-label,
+.field span,
+.stats-grid span,
+.primary-result span {
+  color: var(--ink-soft);
+}
+
+.counter-value {
+  margin-top: 0.2rem;
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.stepper,
+.quick-actions,
+.segmented-control {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.stepper {
+  grid-template-columns: repeat(2, minmax(3rem, 1fr));
+}
+
+.stepper button,
+.quick-actions button,
+.segmented-control button {
+  min-height: 3rem;
+  border: 0;
+  border-radius: 0.95rem;
+  background: #efe4cd;
+  color: #24180e;
+}
+
+.stepper button {
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.quick-actions {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: 0.9rem;
+}
+
+.segmented-control {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.segmented-control .is-active {
+  background: var(--accent);
+  color: #fff7f1;
+}
+
+.field {
+  display: grid;
+  gap: 0.45rem;
+  margin-top: 1rem;
+}
+
+.field input {
+  min-height: 3.25rem;
+  padding: 0 0.9rem;
+  border: 1px solid rgba(31, 23, 15, 0.12);
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.preset-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.75rem;
+}
+
+.preset-form input {
+  min-height: 3rem;
+  padding: 0 0.9rem;
+  border: 1px solid rgba(31, 23, 15, 0.12);
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.preset-form button {
+  min-height: 3rem;
+  padding: 0 1rem;
+  border: 0;
+  border-radius: 1rem;
+  background: var(--accent);
+  color: #fff7f1;
+}
+
+.saved-list {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.saved-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.saved-apply {
+  display: grid;
+  gap: 0.2rem;
+  min-width: 0;
+  padding: 0.9rem 1rem;
+  text-align: left;
+  border: 0;
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.saved-apply strong,
+.saved-apply span,
+.empty-state {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.saved-apply span,
+.empty-state {
+  color: var(--ink-soft);
+}
+
+.empty-state {
+  margin: 1rem 0 0;
+}
+
+.result-panel {
+  background:
+    linear-gradient(180deg, rgba(159, 34, 34, 0.95), rgba(105, 23, 23, 0.95)),
+    var(--panel-bg);
+  color: #fff8f2;
+}
+
+.result-panel .panel-header h2,
+.result-panel .primary-result span,
+.result-panel .stats-grid span {
+  color: rgba(255, 248, 242, 0.76);
+}
+
+.primary-result {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.primary-result strong {
+  font-size: clamp(1.8rem, 7vw, 3rem);
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.8rem;
+  margin-top: 1rem;
+}
+
+.stats-grid article {
+  padding: 0.9rem;
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.stats-grid strong {
+  display: block;
+  margin-top: 0.2rem;
+  font-size: 1.3rem;
+}
+
+.distribution-list {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.distribution-row {
+  display: grid;
+  grid-template-columns: 2.5rem minmax(0, 1fr) 4.7rem;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.distribution-row.is-highlighted .distribution-total,
+.distribution-row.is-highlighted .distribution-probability {
+  color: var(--accent-strong);
+  font-weight: 700;
+}
+
+.distribution-bar-shell {
+  height: 0.9rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(80, 47, 23, 0.1);
+}
+
+.distribution-bar {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #d99e28 0%, #9f2222 100%);
+}
+
+.distribution-probability {
+  text-align: right;
+}
+
+@media (min-width: 640px) {
+  .page-shell {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+
+  .counter-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .segmented-control {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
