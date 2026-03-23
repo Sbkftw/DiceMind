@@ -103,7 +103,7 @@ Configuration recommandée dans Cloudflare Pages :
 - Build output directory : `dist`
 - Root directory : laisser vide si ce repo ne devient pas un monorepo
 
-Le projet contient déjà [public/_redirects](./public/_redirects) pour forcer le fallback vers `index.html`. C'est utile si l'app utilise plus tard des routes côté client, et ça ne gêne pas le déploiement actuel.
+Le fallback SPA est géré par la configuration détectée par Cloudflare lors du déploiement Vite/Wrangler. Il ne faut pas ajouter un fichier `_redirects` global vers `index.html` dans cette configuration, sinon Cloudflare détecte une boucle infinie.
 
 ### Étapes
 
