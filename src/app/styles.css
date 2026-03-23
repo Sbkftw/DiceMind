@@ -26,6 +26,12 @@
   --surface-strong: rgba(50, 35, 59, 0.9);
   --button-surface: rgba(141, 92, 135, 0.16);
   --shadow: 0 20px 52px rgba(50, 35, 59, 0.16);
+  --die-novice: #fffdf7;
+  --die-novice-edge: rgba(93, 84, 64, 0.18);
+  --die-adept: #f0c94f;
+  --die-adept-edge: #b1840a;
+  --die-master: #cb534d;
+  --die-master-edge: #8d2f2a;
 }
 
 * {
@@ -147,6 +153,53 @@ button {
     var(--surface-soft);
 }
 
+.die-card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid transparent;
+}
+
+.die-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 0.5rem;
+  border-radius: 1rem 0 0 1rem;
+}
+
+.die-card-novice {
+  border-color: var(--die-novice-edge);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(243, 238, 228, 0.82)),
+    var(--surface-soft);
+}
+
+.die-card-novice::before {
+  background: linear-gradient(180deg, #ffffff, #ddd6c8);
+}
+
+.die-card-adept {
+  border-color: rgba(177, 132, 10, 0.3);
+  background:
+    linear-gradient(135deg, rgba(240, 201, 79, 0.34), rgba(255, 247, 204, 0.82)),
+    var(--surface-soft);
+}
+
+.die-card-adept::before {
+  background: linear-gradient(180deg, #ffd764, #b1840a);
+}
+
+.die-card-master {
+  border-color: rgba(141, 47, 42, 0.34);
+  background:
+    linear-gradient(135deg, rgba(203, 83, 77, 0.3), rgba(255, 227, 224, 0.78)),
+    var(--surface-soft);
+}
+
+.die-card-master::before {
+  background: linear-gradient(180deg, #e16e66, #8d2f2a);
+}
+
 .counter-label,
 .field span,
 .stats-grid span,
@@ -189,6 +242,30 @@ button {
 .quick-actions {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   margin-top: 0.9rem;
+}
+
+.die-action {
+  position: relative;
+  border: 1px solid transparent;
+  font-weight: 600;
+}
+
+.die-action-novice {
+  border-color: var(--die-novice-edge);
+  background: linear-gradient(135deg, #ffffff, #ece5d7);
+  color: var(--carbon-black);
+}
+
+.die-action-adept {
+  border-color: rgba(177, 132, 10, 0.36);
+  background: linear-gradient(135deg, #ffd764, #e6b52e);
+  color: #4f3500;
+}
+
+.die-action-master {
+  border-color: rgba(141, 47, 42, 0.42);
+  background: linear-gradient(135deg, #df6b63, #b63e38);
+  color: #fff7f6;
 }
 
 .segmented-control {

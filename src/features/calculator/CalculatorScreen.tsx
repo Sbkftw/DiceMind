@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { clampDieCount } from "../../domain/dice";
 import { calculateResult } from "../../domain/probability";
-import type { DicePool, GoalType } from "../../domain/models";
+import type { DicePool, DieType, GoalType } from "../../domain/models";
 import { formatExpectedValue, formatPercent } from "../../shared/format";
 import { readQueryState, writeQueryState } from "../../shared/queryState";
 import {
@@ -28,14 +28,15 @@ const GOAL_OPTIONS: { value: GoalType; label: string }[] = [
 ];
 
 type DieCounterProps = {
+  dieType: DieType;
   label: string;
   value: number;
   onChange: (nextValue: number) => void;
 };
 
-function DieCounter({ label, value, onChange }: DieCounterProps) {
+function DieCounter({ dieType, label, value, onChange }: DieCounterProps) {
   return (
-    <div className="counter-card">
+    <div className={`counter-card die-card die-card-${dieType}`}>
       <div>
         <div className="counter-label">{label}</div>
         <div className="counter-value">{value}</div>
@@ -158,6 +159,7 @@ export function CalculatorScreen() {
 
         <div className="counter-grid">
           <DieCounter
+            dieType="novice"
             label="Novice"
             value={pool.novice}
             onChange={(novice) =>
@@ -165,6 +167,7 @@ export function CalculatorScreen() {
             }
           />
           <DieCounter
+            dieType="adept"
             label="Adept"
             value={pool.adept}
             onChange={(adept) =>
@@ -172,6 +175,7 @@ export function CalculatorScreen() {
             }
           />
           <DieCounter
+            dieType="master"
             label="Master"
             value={pool.master}
             onChange={(master) =>
@@ -183,6 +187,7 @@ export function CalculatorScreen() {
         <div className="quick-actions">
           <button
             type="button"
+            className="die-action die-action-novice"
             onClick={() =>
               setPool((current) => ({
                 ...current,
@@ -194,6 +199,7 @@ export function CalculatorScreen() {
           </button>
           <button
             type="button"
+            className="die-action die-action-adept"
             onClick={() =>
               setPool((current) => ({
                 ...current,
@@ -205,6 +211,7 @@ export function CalculatorScreen() {
           </button>
           <button
             type="button"
+            className="die-action die-action-master"
             onClick={() =>
               setPool((current) => ({
                 ...current,
