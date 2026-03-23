@@ -3,21 +3,29 @@
   font-family: "Segoe UI", "Trebuchet MS", sans-serif;
   line-height: 1.4;
   font-weight: 400;
-  color: #1f170f;
+  color: #2b271f;
   background:
-    radial-gradient(circle at top left, rgba(244, 217, 167, 0.7), transparent 28%),
-    radial-gradient(circle at top right, rgba(159, 34, 34, 0.18), transparent 24%),
-    linear-gradient(180deg, #f3efe2 0%, #ddd2b9 100%);
+    radial-gradient(circle at top left, rgba(135, 177, 77, 0.3), transparent 26%),
+    radial-gradient(circle at top right, rgba(141, 92, 135, 0.24), transparent 30%),
+    linear-gradient(180deg, #f0ebe7 0%, #d8cfdb 52%, #c4c5b2 100%);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  --panel-bg: rgba(255, 249, 237, 0.84);
-  --panel-border: rgba(80, 47, 23, 0.12);
-  --accent: #9f2222;
-  --accent-strong: #7d1919;
-  --ink-soft: #6c5844;
-  --shadow: 0 18px 48px rgba(72, 39, 20, 0.12);
+  --muted-olive: #87b14d;
+  --midnight-violet: #32233b;
+  --carbon-black: #2b271f;
+  --dusty-lavender: #8d5c87;
+  --vintage-grape: #513756;
+  --panel-bg: rgba(255, 251, 255, 0.72);
+  --panel-border: rgba(50, 35, 59, 0.16);
+  --accent: var(--muted-olive);
+  --accent-strong: var(--midnight-violet);
+  --ink-soft: rgba(43, 39, 31, 0.72);
+  --surface-soft: rgba(81, 55, 86, 0.08);
+  --surface-strong: rgba(50, 35, 59, 0.9);
+  --button-surface: rgba(141, 92, 135, 0.16);
+  --shadow: 0 20px 52px rgba(50, 35, 59, 0.16);
 }
 
 * {
@@ -79,7 +87,9 @@ button {
   padding: 1rem;
   border: 1px solid var(--panel-border);
   border-radius: 1.25rem;
-  background: var(--panel-bg);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.56), rgba(255, 255, 255, 0.38)),
+    var(--panel-bg);
   backdrop-filter: blur(18px);
   box-shadow: var(--shadow);
 }
@@ -109,14 +119,15 @@ button {
 }
 
 .ghost-button {
-  border: 1px solid rgba(31, 23, 15, 0.12);
+  border: 1px solid rgba(50, 35, 59, 0.16);
   border-radius: 999px;
-  background: transparent;
+  background: rgba(255, 255, 255, 0.45);
+  color: var(--accent-strong);
   padding: 0.45rem 0.8rem;
 }
 
 .danger-button {
-  color: var(--accent-strong);
+  color: var(--dusty-lavender);
 }
 
 .counter-grid {
@@ -131,7 +142,9 @@ button {
   gap: 1rem;
   padding: 0.9rem 1rem;
   border-radius: 1rem;
-  background: rgba(255, 255, 255, 0.6);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.64), rgba(255, 255, 255, 0.42)),
+    var(--surface-soft);
 }
 
 .counter-label,
@@ -164,8 +177,8 @@ button {
   min-height: 3rem;
   border: 0;
   border-radius: 0.95rem;
-  background: #efe4cd;
-  color: #24180e;
+  background: var(--button-surface);
+  color: var(--midnight-violet);
 }
 
 .stepper button {
@@ -183,8 +196,8 @@ button {
 }
 
 .segmented-control .is-active {
-  background: var(--accent);
-  color: #fff7f1;
+  background: linear-gradient(135deg, var(--dusty-lavender), var(--vintage-grape));
+  color: #fffaff;
 }
 
 .field {
@@ -196,9 +209,10 @@ button {
 .field input {
   min-height: 3.25rem;
   padding: 0 0.9rem;
-  border: 1px solid rgba(31, 23, 15, 0.12);
+  border: 1px solid rgba(50, 35, 59, 0.16);
   border-radius: 1rem;
-  background: rgba(255, 255, 255, 0.72);
+  background: rgba(255, 255, 255, 0.78);
+  color: var(--carbon-black);
 }
 
 .preset-form {
@@ -210,9 +224,10 @@ button {
 .preset-form input {
   min-height: 3rem;
   padding: 0 0.9rem;
-  border: 1px solid rgba(31, 23, 15, 0.12);
+  border: 1px solid rgba(50, 35, 59, 0.16);
   border-radius: 1rem;
-  background: rgba(255, 255, 255, 0.72);
+  background: rgba(255, 255, 255, 0.78);
+  color: var(--carbon-black);
 }
 
 .preset-form button {
@@ -220,8 +235,8 @@ button {
   padding: 0 1rem;
   border: 0;
   border-radius: 1rem;
-  background: var(--accent);
-  color: #fff7f1;
+  background: linear-gradient(135deg, var(--muted-olive), #6a9440);
+  color: #f8fff1;
 }
 
 .saved-list {
@@ -245,7 +260,9 @@ button {
   text-align: left;
   border: 0;
   border-radius: 1rem;
-  background: rgba(255, 255, 255, 0.6);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.64), rgba(255, 255, 255, 0.42)),
+    var(--surface-soft);
 }
 
 .saved-apply strong,
@@ -267,15 +284,16 @@ button {
 
 .result-panel {
   background:
-    linear-gradient(180deg, rgba(159, 34, 34, 0.95), rgba(105, 23, 23, 0.95)),
+    radial-gradient(circle at top left, rgba(135, 177, 77, 0.24), transparent 30%),
+    linear-gradient(180deg, rgba(50, 35, 59, 0.98), rgba(81, 55, 86, 0.96)),
     var(--panel-bg);
-  color: #fff8f2;
+  color: #fffaff;
 }
 
 .result-panel .panel-header h2,
 .result-panel .primary-result span,
 .result-panel .stats-grid span {
-  color: rgba(255, 248, 242, 0.76);
+  color: rgba(255, 250, 255, 0.78);
 }
 
 .primary-result {
@@ -299,7 +317,8 @@ button {
 .stats-grid article {
   padding: 0.9rem;
   border-radius: 1rem;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .stats-grid strong {
@@ -322,7 +341,7 @@ button {
 
 .distribution-row.is-highlighted .distribution-total,
 .distribution-row.is-highlighted .distribution-probability {
-  color: var(--accent-strong);
+  color: var(--vintage-grape);
   font-weight: 700;
 }
 
@@ -330,13 +349,13 @@ button {
   height: 0.9rem;
   overflow: hidden;
   border-radius: 999px;
-  background: rgba(80, 47, 23, 0.1);
+  background: rgba(50, 35, 59, 0.12);
 }
 
 .distribution-bar {
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(90deg, #d99e28 0%, #9f2222 100%);
+  background: linear-gradient(90deg, var(--muted-olive) 0%, var(--dusty-lavender) 55%, var(--vintage-grape) 100%);
 }
 
 .distribution-probability {

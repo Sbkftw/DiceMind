@@ -116,13 +116,13 @@ export function CalculatorScreen() {
         <p className="eyebrow">Valor &amp; Villainy: Minions of Mordak</p>
         <h1>Mordak Dice Odds</h1>
         <p className="hero-copy">
-          Calcul exact des probabilites de hits, pense pour une lecture rapide sur mobile.
+          Calcul exact des probabilités de hits, pensé pour une lecture rapide sur mobile.
         </p>
       </section>
 
       <section className="panel">
         <header className="panel-header">
-          <h2>Pool de des</h2>
+          <h2>Pool de dés</h2>
           <div className="action-row">
             <button
               type="button"
@@ -143,7 +143,7 @@ export function CalculatorScreen() {
 
                 try {
                   await navigator.clipboard.writeText(shareUrl);
-                  setShareFeedback("Lien copie");
+                  setShareFeedback("Lien copié");
                   window.setTimeout(() => setShareFeedback(""), 1400);
                 } catch {
                   setShareFeedback("Copie indisponible");
@@ -256,15 +256,17 @@ export function CalculatorScreen() {
         </header>
 
         <div className="primary-result">
-          <span>Probabilite</span>
+          <span>Probabilité</span>
           <strong>
-            {result.probability === undefined ? "Distribution complete" : formatPercent(result.probability)}
+            {result.probability === undefined
+              ? "Distribution complète"
+              : formatPercent(result.probability)}
           </strong>
         </div>
 
         <div className="stats-grid">
           <article>
-            <span>Esperance</span>
+            <span>Espérance</span>
             <strong>{formatExpectedValue(result.expectedValue)}</strong>
           </article>
           <article>
@@ -356,7 +358,7 @@ export function CalculatorScreen() {
             ))}
           </div>
         ) : (
-          <p className="empty-state">Sauvegarde ici tes configurations frequentes.</p>
+          <p className="empty-state">Sauvegarde ici tes configurations fréquentes.</p>
         )}
       </section>
 
@@ -386,7 +388,7 @@ export function CalculatorScreen() {
             ))}
           </div>
         ) : (
-          <p className="empty-state">Tes derniers calculs apparaitront ici automatiquement.</p>
+          <p className="empty-state">Tes derniers calculs apparaîtront ici automatiquement.</p>
         )}
       </section>
     </main>
