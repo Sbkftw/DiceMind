@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 640" role="img" aria-labelledby="title desc">
+  <title id="title">Mordak Dice Odds</title>
+  <desc id="desc">Fantasy banner in olive and violet tones for the Mordak Dice Odds project.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#32233B" />
+      <stop offset="45%" stop-color="#513756" />
+      <stop offset="100%" stop-color="#2B271F" />
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#87B14D" />
+      <stop offset="50%" stop-color="#8D5C87" />
+      <stop offset="100%" stop-color="#513756" />
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="14" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect width="1600" height="640" fill="url(#bg)" />
+  <circle cx="170" cy="110" r="220" fill="#87B14D" opacity="0.12" />
+  <circle cx="1370" cy="140" r="250" fill="#8D5C87" opacity="0.14" />
+  <circle cx="1250" cy="570" r="320" fill="#513756" opacity="0.18" />
+
+  <path
+    d="M0 498 C185 450 336 532 536 498 C761 458 894 332 1118 346 C1303 358 1461 492 1600 468 L1600 640 L0 640 Z"
+    fill="#2B271F"
+    opacity="0.72"
+  />
+
+  <g opacity="0.2">
+    <path d="M180 208 l44 -26 l44 26 l0 52 l-44 26 l-44 -26 z" fill="none" stroke="#87B14D" stroke-width="4" />
+    <path d="M1280 196 l56 -32 l56 32 l0 64 l-56 32 l-56 -32 z" fill="none" stroke="#8D5C87" stroke-width="4" />
+    <path d="M1138 448 l34 -20 l34 20 l0 40 l-34 20 l-34 -20 z" fill="none" stroke="#87B14D" stroke-width="4" />
+  </g>
+
+  <g transform="translate(1080 166)" filter="url(#glow)">
+    <rect x="0" y="0" width="212" height="212" rx="24" fill="#87B14D" />
+    <rect x="22" y="22" width="168" height="168" rx="18" fill="#32233B" />
+    <rect x="50" y="50" width="34" height="34" rx="6" fill="#8D5C87" />
+    <rect x="128" y="50" width="34" height="34" rx="6" fill="#8D5C87" />
+    <rect x="89" y="128" width="34" height="34" rx="6" fill="#87B14D" />
+  </g>
+
+  <g transform="translate(120 150)">
+    <text
+      x="0"
+      y="0"
+      fill="#F4F0F7"
+      font-size="34"
+      font-family="'Segoe UI', 'Trebuchet MS', sans-serif"
+      font-weight="700"
+      letter-spacing="7"
+    >
+      VALOR &amp; VILLAINY
+    </text>
+    <text
+      x="0"
+      y="118"
+      fill="#FFFFFF"
+      font-size="92"
+      font-family="'Trebuchet MS', 'Segoe UI', sans-serif"
+      font-weight="700"
+    >
+      Mordak Dice Odds
+    </text>
+    <rect x="0" y="150" width="520" height="8" rx="4" fill="url(#accent)" />
+    <text
+      x="0"
+      y="220"
+      fill="#DAD2E1"
+      font-size="34"
+      font-family="'Segoe UI', 'Trebuchet MS', sans-serif"
+      font-weight="400"
+    >
+      Calcul exact des probabilités de dés pour Minions of Mordak
+    </text>
+    <text
+      x="0"
+      y="276"
+      fill="#A8C77E"
+      font-size="28"
+      font-family="'Segoe UI', 'Trebuchet MS', sans-serif"
+      font-weight="600"
+    >
+      Mobile-first • PWA • Probabilités exactes
+    </text>
+  </g>
+</svg>
