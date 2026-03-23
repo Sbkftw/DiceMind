@@ -54,11 +54,13 @@ function DieCounter({ dieType, label, value, onChange }: DieCounterProps) {
 }
 
 export function CalculatorScreen() {
-  const [pool, setPool] = useState<DicePool>(() => readQueryState()?.pool ?? DEFAULT_POOL);
+  const initialQueryState = readQueryState();
+  const [pool, setPool] = useState<DicePool>(() => initialQueryState?.pool ?? DEFAULT_POOL);
   const [goalType, setGoalType] = useState<GoalType>(
-    () => readQueryState()?.goalType ?? "atLeast"
+    () => initialQueryState?.goalType ?? "atLeast"
   );
-  const [target, setTarget] = useState<number>(() => readQueryState()?.target ?? 4);
+  const [target, setTarget] = useState<number>(() => initialQueryState?.target ?? 4);
+  const [targetInput, setTargetInput] = useState<string>(() => `${initialQueryState?.target ?? 4}`);
   const [presetName, setPresetName] = useState("");
   const [presets, setPresets] = useState<SavedScenario[]>(() => loadPresets());
   const [history, setHistory] = useState<SavedScenario[]>(() => loadHistory());
@@ -78,6 +80,10 @@ export function CalculatorScreen() {
   useEffect(() => {
     writeQueryState({ pool, goalType, target });
   }, [goalType, pool, target]);
+
+  useEffect(() => {
+    setTargetInput(`${target}`);
+  }, [target]);
 
   useEffect(() => {
     if (!didRecordInitialHistory.current) {
@@ -110,6 +116,22 @@ export function CalculatorScreen() {
       isHighlighted
     };
   });
+
+  function handleTargetChange(nextValue: string) {
+    if (!/^\d*$/.test(nextValue)) {
+      return;
+    }
+
+    setTargetInput(nextValue);
+    setTarget(nextValue === "" ? 0 : Number(nextValue));
+  }
+
+  function commitTargetInput() {
+    if (targetInput === "") {
+      setTarget(0);
+      setTargetInput("0");
+    }
+  }
 
   return (
     <main className="page-shell">
@@ -245,13 +267,13 @@ export function CalculatorScreen() {
         <label className="field">
           <span>Valeur cible</span>
           <input
-            type="number"
-            min={0}
-            step={1}
-            value={target}
-            onChange={(event) =>
-              setTarget(Math.max(0, Math.trunc(Number(event.target.value) || 0)))
-            }
+            type="text"
+            inputMode="numeric"
+            pattern="[0-9]*"
+            value={targetInput}
+            onChange={(event) => handleTargetChange(event.target.value)}
+            onBlur={commitTargetInput}
+            onFocus={(event) => event.currentTarget.select()}
             disabled={goalType === "distribution"}
           />
         </label>
