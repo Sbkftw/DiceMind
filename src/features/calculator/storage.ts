@@ -10,8 +10,8 @@ export type SavedScenario = {
   updatedAt: string;
 };
 
-const PRESETS_KEY = "mordak-dice-odds:presets";
-const HISTORY_KEY = "mordak-dice-odds:history";
+const PRESETS_KEY = "dice-mind:presets";
+const HISTORY_KEY = "dice-mind:history";
 const MAX_HISTORY_ITEMS = 8;
 const MAX_PRESET_ITEMS = 12;
 
