@@ -1,4 +1,5 @@
 import type { DicePool, DieType, Distribution } from "./models";
+import { normalizeNonNegativeInteger } from "../shared/number";
 
 export const MAX_DICE_PER_TYPE = 30;
 
@@ -25,11 +26,7 @@ export const DIE_EXPECTED_VALUE: Record<DieType, number> = {
 };
 
 export function clampDieCount(value: number): number {
-  if (!Number.isFinite(value)) {
-    return 0;
-  }
-
-  return Math.min(MAX_DICE_PER_TYPE, Math.max(0, Math.trunc(value)));
+  return Math.min(MAX_DICE_PER_TYPE, normalizeNonNegativeInteger(value));
 }
 
 export function normalizePool(pool: DicePool): DicePool {

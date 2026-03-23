@@ -1,9 +1,15 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { matchesGoal } from "../../domain/goals";
 import { clampDieCount } from "../../domain/dice";
 import { calculateResult } from "../../domain/probability";
 import type { DicePool, DieType, GoalType } from "../../domain/models";
 import { formatExpectedValue, formatPercent } from "../../shared/format";
+import { normalizeNonNegativeInteger } from "../../shared/number";
 import { readQueryState, writeQueryState } from "../../shared/queryState";
+import { DEFAULT_POOL, DEFAULT_TARGET, DIE_LABELS, DIE_TYPES, GOAL_OPTIONS } from "./constants";
+import { DieCounter } from "./DieCounter";
+import { DistributionList } from "./DistributionList";
+import { ScenarioList } from "./ScenarioList";
 import {
   deletePreset,
   formatScenarioLabel,
@@ -13,54 +19,24 @@ import {
   savePreset,
   type SavedScenario
 } from "./storage";
+import { TargetField } from "./TargetField";
 
-const DEFAULT_POOL: DicePool = {
-  novice: 2,
-  adept: 1,
-  master: 1
+type CalculatorState = {
+  pool: DicePool;
+  goalType: GoalType;
+  target: number;
 };
 
-const GOAL_OPTIONS: { value: GoalType; label: string }[] = [
-  { value: "atLeast", label: "Au moins" },
-  { value: "exactly", label: "Exactement" },
-  { value: "atMost", label: "Au plus" },
-  { value: "distribution", label: "Distribution" }
-];
-
-type DieCounterProps = {
-  dieType: DieType;
-  label: string;
-  value: number;
-  onChange: (nextValue: number) => void;
-};
-
-function DieCounter({ dieType, label, value, onChange }: DieCounterProps) {
-  return (
-    <div className={`counter-card die-card die-card-${dieType}`}>
-      <div>
-        <div className="counter-label">{label}</div>
-        <div className="counter-value">{value}</div>
-      </div>
-      <div className="stepper">
-        <button type="button" onClick={() => onChange(Math.max(0, value - 1))}>
-          -
-        </button>
-        <button type="button" onClick={() => onChange(value + 1)}>
-          +
-        </button>
-      </div>
-    </div>
-  );
-}
+const HISTORY_RECORD_DELAY_MS = 250;
+const SHARE_FEEDBACK_DURATION_MS = 1400;
+const EMPTY_TARGET_INPUT = "";
 
 export function CalculatorScreen() {
-  const initialQueryState = readQueryState();
-  const [pool, setPool] = useState<DicePool>(() => initialQueryState?.pool ?? DEFAULT_POOL);
-  const [goalType, setGoalType] = useState<GoalType>(
-    () => initialQueryState?.goalType ?? "atLeast"
-  );
-  const [target, setTarget] = useState<number>(() => initialQueryState?.target ?? 4);
-  const [targetInput, setTargetInput] = useState<string>(() => `${initialQueryState?.target ?? 4}`);
+  const initialState = getInitialCalculatorState();
+  const [pool, setPool] = useState<DicePool>(initialState.pool);
+  const [goalType, setGoalType] = useState<GoalType>(initialState.goalType);
+  const [target, setTarget] = useState<number>(initialState.target);
+  const [targetInput, setTargetInput] = useState<string>(String(initialState.target));
   const [presetName, setPresetName] = useState("");
   const [presets, setPresets] = useState<SavedScenario[]>(() => loadPresets());
   const [history, setHistory] = useState<SavedScenario[]>(() => loadHistory());
@@ -77,12 +53,26 @@ export function CalculatorScreen() {
     [goalType, pool, target]
   );
 
+  const distributionRows = useMemo(
+    () =>
+      Object.entries(result.distribution).map(([totalKey, probability]) => {
+        const total = Number(totalKey);
+
+        return {
+          total,
+          probability,
+          isHighlighted: matchesGoal(goalType, total, target)
+        };
+      }),
+    [goalType, result.distribution, target]
+  );
+
   useEffect(() => {
     writeQueryState({ pool, goalType, target });
   }, [goalType, pool, target]);
 
   useEffect(() => {
-    setTargetInput(`${target}`);
+    setTargetInput(String(target));
   }, [target]);
 
   useEffect(() => {
@@ -94,28 +84,17 @@ export function CalculatorScreen() {
 
     const timeoutId = window.setTimeout(() => {
       setHistory(pushHistory({ pool, goalType, target }));
-    }, 250);
+    }, HISTORY_RECORD_DELAY_MS);
 
     return () => window.clearTimeout(timeoutId);
   }, [goalType, pool, target]);
 
-  const highlightedRows = Object.entries(result.distribution).map(([totalKey, probability]) => {
-    const total = Number(totalKey);
-    const isHighlighted =
-      goalType === "exactly"
-        ? total === target
-        : goalType === "atLeast"
-          ? total >= target
-          : goalType === "atMost"
-            ? total <= target
-            : false;
-
-    return {
-      total,
-      probability,
-      isHighlighted
-    };
-  });
+  function updatePoolValue(dieType: DieType, nextValue: number) {
+    setPool((currentPool) => ({
+      ...currentPool,
+      [dieType]: clampDieCount(nextValue)
+    }));
+  }
 
   function handleTargetChange(nextValue: string) {
     if (!/^\d*$/.test(nextValue)) {
@@ -123,11 +102,11 @@ export function CalculatorScreen() {
     }
 
     setTargetInput(nextValue);
-    setTarget(nextValue === "" ? 0 : Number(nextValue));
+    setTarget(nextValue === EMPTY_TARGET_INPUT ? 0 : normalizeNonNegativeInteger(Number(nextValue)));
   }
 
   function commitTargetInput() {
-    if (targetInput === "") {
+    if (targetInput === EMPTY_TARGET_INPUT) {
       setTarget(0);
       setTargetInput("0");
     }
@@ -136,7 +115,41 @@ export function CalculatorScreen() {
   function adjustTarget(delta: number) {
     const nextTarget = Math.max(0, target + delta);
     setTarget(nextTarget);
-    setTargetInput(`${nextTarget}`);
+    setTargetInput(String(nextTarget));
+  }
+
+  function applyScenario(entry: SavedScenario) {
+    setPool(entry.pool);
+    setGoalType(entry.goalType);
+    setTarget(entry.target);
+  }
+
+  async function copyShareUrl() {
+    const shareUrl = window.location.href;
+
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      showTemporaryFeedback("Lien copié");
+    } catch {
+      showTemporaryFeedback("Copie indisponible");
+    }
+  }
+
+  function showTemporaryFeedback(message: string) {
+    setShareFeedback(message);
+    window.setTimeout(() => setShareFeedback(""), SHARE_FEEDBACK_DURATION_MS);
+  }
+
+  function resetCalculator() {
+    setPool({ novice: 0, adept: 0, master: 0 });
+    setGoalType("atLeast");
+    setTarget(0);
+  }
+
+  function saveCurrentPreset() {
+    const label = presetName.trim() || formatScenarioLabel(pool, goalType, target);
+    setPresets(savePreset({ label, pool, goalType, target }));
+    setPresetName("");
   }
 
   return (
@@ -153,102 +166,38 @@ export function CalculatorScreen() {
         <header className="panel-header">
           <h2>Pool de dés</h2>
           <div className="action-row">
-            <button
-              type="button"
-              className="ghost-button"
-              onClick={() => {
-                setPool({ novice: 0, adept: 0, master: 0 });
-                setGoalType("atLeast");
-                setTarget(0);
-              }}
-            >
+            <button type="button" className="ghost-button" onClick={resetCalculator}>
               Reset
             </button>
-            <button
-              type="button"
-              className="ghost-button"
-              onClick={async () => {
-                const shareUrl = window.location.href;
-
-                try {
-                  await navigator.clipboard.writeText(shareUrl);
-                  setShareFeedback("Lien copié");
-                  window.setTimeout(() => setShareFeedback(""), 1400);
-                } catch {
-                  setShareFeedback("Copie indisponible");
-                  window.setTimeout(() => setShareFeedback(""), 1400);
-                }
-              }}
-            >
+            <button type="button" className="ghost-button" onClick={copyShareUrl}>
               Partager
             </button>
           </div>
         </header>
 
         <div className="counter-grid">
-          <DieCounter
-            dieType="novice"
-            label="Novice"
-            value={pool.novice}
-            onChange={(novice) =>
-              setPool((current) => ({ ...current, novice: clampDieCount(novice) }))
-            }
-          />
-          <DieCounter
-            dieType="adept"
-            label="Adept"
-            value={pool.adept}
-            onChange={(adept) =>
-              setPool((current) => ({ ...current, adept: clampDieCount(adept) }))
-            }
-          />
-          <DieCounter
-            dieType="master"
-            label="Master"
-            value={pool.master}
-            onChange={(master) =>
-              setPool((current) => ({ ...current, master: clampDieCount(master) }))
-            }
-          />
+          {DIE_TYPES.map((dieType) => (
+            <DieCounter
+              key={dieType}
+              dieType={dieType}
+              label={DIE_LABELS[dieType]}
+              value={pool[dieType]}
+              onChange={(nextValue) => updatePoolValue(dieType, nextValue)}
+            />
+          ))}
         </div>
 
         <div className="quick-actions">
-          <button
-            type="button"
-            className="die-action die-action-novice"
-            onClick={() =>
-              setPool((current) => ({
-                ...current,
-                novice: clampDieCount(current.novice + 1)
-              }))
-            }
-          >
-            +1 Novice
-          </button>
-          <button
-            type="button"
-            className="die-action die-action-adept"
-            onClick={() =>
-              setPool((current) => ({
-                ...current,
-                adept: clampDieCount(current.adept + 1)
-              }))
-            }
-          >
-            +1 Adept
-          </button>
-          <button
-            type="button"
-            className="die-action die-action-master"
-            onClick={() =>
-              setPool((current) => ({
-                ...current,
-                master: clampDieCount(current.master + 1)
-              }))
-            }
-          >
-            +1 Master
-          </button>
+          {DIE_TYPES.map((dieType) => (
+            <button
+              key={dieType}
+              type="button"
+              className={`die-action die-action-${dieType}`}
+              onClick={() => updatePoolValue(dieType, pool[dieType] + 1)}
+            >
+              +1 {DIE_LABELS[dieType]}
+            </button>
+          ))}
         </div>
       </section>
 
@@ -270,39 +219,13 @@ export function CalculatorScreen() {
           ))}
         </div>
 
-        <label className="field">
-          <span>Valeur cible</span>
-          <div className="target-stepper">
-            <button
-              type="button"
-              className="target-stepper-button"
-              onClick={() => adjustTarget(-1)}
-              disabled={goalType === "distribution"}
-              aria-label="Réduire la cible"
-            >
-              -
-            </button>
-            <input
-              type="text"
-              inputMode="numeric"
-              pattern="[0-9]*"
-              value={targetInput}
-              onChange={(event) => handleTargetChange(event.target.value)}
-              onBlur={commitTargetInput}
-              onFocus={(event) => event.currentTarget.select()}
-              disabled={goalType === "distribution"}
-            />
-            <button
-              type="button"
-              className="target-stepper-button"
-              onClick={() => adjustTarget(1)}
-              disabled={goalType === "distribution"}
-              aria-label="Augmenter la cible"
-            >
-              +
-            </button>
-          </div>
-        </label>
+        <TargetField
+          disabled={goalType === "distribution"}
+          value={targetInput}
+          onChange={handleTargetChange}
+          onBlur={commitTargetInput}
+          onAdjust={adjustTarget}
+        />
       </section>
 
       <section className="panel result-panel">
@@ -340,23 +263,7 @@ export function CalculatorScreen() {
           <h2>Distribution</h2>
         </header>
 
-        <div className="distribution-list">
-          {highlightedRows.map((row) => (
-            <div
-              key={row.total}
-              className={`distribution-row${row.isHighlighted ? " is-highlighted" : ""}`}
-            >
-              <span className="distribution-total">{row.total}</span>
-              <div className="distribution-bar-shell" aria-hidden="true">
-                <div
-                  className="distribution-bar"
-                  style={{ width: `${row.probability * 100}%` }}
-                />
-              </div>
-              <span className="distribution-probability">{formatPercent(row.probability)}</span>
-            </div>
-          ))}
-        </div>
+        <DistributionList rows={distributionRows} />
       </section>
 
       <section className="panel">
@@ -373,45 +280,20 @@ export function CalculatorScreen() {
             value={presetName}
             onChange={(event) => setPresetName(event.target.value)}
           />
-          <button
-            type="button"
-            onClick={() => {
-              const label = presetName.trim() || formatScenarioLabel(pool, goalType, target);
-              setPresets(savePreset({ label, pool, goalType, target }));
-              setPresetName("");
-            }}
-          >
+          <button type="button" onClick={saveCurrentPreset}>
             Sauver
           </button>
         </div>
 
         {presets.length ? (
-          <div className="saved-list">
-            {presets.map((preset) => (
-              <article key={preset.id} className="saved-item">
-                <button
-                  type="button"
-                  className="saved-apply"
-                  onClick={() => {
-                    setPool(preset.pool);
-                    setGoalType(preset.goalType);
-                    setTarget(preset.target);
-                  }}
-                >
-                  <strong>{preset.label}</strong>
-                  <span>{formatScenarioLabel(preset.pool, preset.goalType, preset.target)}</span>
-                </button>
-                <button
-                  type="button"
-                  className="ghost-button danger-button"
-                  onClick={() => setPresets(deletePreset(preset.id))}
-                  aria-label={`Supprimer ${preset.label}`}
-                >
-                  Suppr.
-                </button>
-              </article>
-            ))}
-          </div>
+          <ScenarioList
+            entries={presets}
+            onApply={applyScenario}
+            onDelete={(id) => setPresets(deletePreset(id))}
+            secondaryText={(entry) =>
+              formatScenarioLabel(entry.pool, entry.goalType, entry.target)
+            }
+          />
         ) : (
           <p className="empty-state">Sauvegarde ici tes configurations fréquentes.</p>
         )}
@@ -424,28 +306,25 @@ export function CalculatorScreen() {
         </header>
 
         {history.length ? (
-          <div className="saved-list">
-            {history.map((entry) => (
-              <article key={entry.id} className="saved-item">
-                <button
-                  type="button"
-                  className="saved-apply"
-                  onClick={() => {
-                    setPool(entry.pool);
-                    setGoalType(entry.goalType);
-                    setTarget(entry.target);
-                  }}
-                >
-                  <strong>{entry.label}</strong>
-                  <span>{new Date(entry.updatedAt).toLocaleString("fr-BE")}</span>
-                </button>
-              </article>
-            ))}
-          </div>
+          <ScenarioList
+            entries={history}
+            onApply={applyScenario}
+            secondaryText={(entry) => new Date(entry.updatedAt).toLocaleString("fr-BE")}
+          />
         ) : (
           <p className="empty-state">Tes derniers calculs apparaîtront ici automatiquement.</p>
         )}
       </section>
     </main>
   );
+}
+
+function getInitialCalculatorState(): CalculatorState {
+  const queryState = readQueryState();
+
+  return {
+    pool: queryState?.pool ?? DEFAULT_POOL,
+    goalType: queryState?.goalType ?? "atLeast",
+    target: queryState?.target ?? DEFAULT_TARGET
+  };
 }

@@ -12,8 +12,8 @@ export default defineConfig({
         name: "Dice Mind - Mordak Odds Calculator",
         short_name: "Dice Mind",
         description: "Probability calculator for Valor & Villainy: Minions of Mordak.",
-        theme_color: "#9f2222",
-        background_color: "#f3efe2",
+        theme_color: "#32233B",
+        background_color: "#2B271F",
         display: "standalone",
         start_url: "/",
         icons: [

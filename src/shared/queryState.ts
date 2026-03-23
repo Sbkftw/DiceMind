@@ -1,4 +1,6 @@
+import { isGoalType } from "../domain/goals";
 import type { DicePool, GoalType } from "../domain/models";
+import { normalizeNonNegativeInteger } from "./number";
 
 export type CalculatorQueryState = {
   pool: DicePool;
@@ -37,12 +39,7 @@ export function writeQueryState(state: CalculatorQueryState) {
 }
 
 function parseGoalType(value: string | null): GoalType {
-  if (
-    value === "atLeast" ||
-    value === "exactly" ||
-    value === "atMost" ||
-    value === "distribution"
-  ) {
+  if (isGoalType(value)) {
     return value;
   }
 
@@ -50,6 +47,5 @@ function parseGoalType(value: string | null): GoalType {
 }
 
 function parseParam(value: string | null): number {
-  const parsed = Number(value);
-  return Number.isFinite(parsed) ? Math.max(0, Math.trunc(parsed)) : 0;
+  return normalizeNonNegativeInteger(Number(value));
 }

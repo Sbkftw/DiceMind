@@ -5,6 +5,7 @@ import {
   getPoolMinValue,
   normalizePool
 } from "./dice";
+import { matchesGoal } from "./goals";
 import type {
   CalculationRequest,
   CalculationResult,
@@ -62,16 +63,7 @@ export function sumProbabilityByGoal(
 
   for (const [totalKey, probability] of Object.entries(distribution)) {
     const total = Number(totalKey);
-
-    if (goalType === "exactly" && total === target) {
-      totalProbability += probability;
-    }
-
-    if (goalType === "atLeast" && total >= target) {
-      totalProbability += probability;
-    }
-
-    if (goalType === "atMost" && total <= target) {
+    if (matchesGoal(goalType, total, target)) {
       totalProbability += probability;
     }
   }

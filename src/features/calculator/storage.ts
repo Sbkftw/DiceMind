@@ -1,5 +1,7 @@
+import { isGoalType } from "../../domain/goals";
 import { clampDieCount } from "../../domain/dice";
 import type { DicePool, GoalType } from "../../domain/models";
+import { normalizeNonNegativeInteger } from "../../shared/number";
 
 export type SavedScenario = {
   id: string;
@@ -45,7 +47,7 @@ export function pushHistory(entry: Omit<SavedScenario, "id" | "updatedAt" | "lab
   const normalizedEntry = {
     pool: normalizePool(entry.pool),
     goalType: entry.goalType,
-    target: Math.max(0, Math.trunc(entry.target))
+    target: normalizeNonNegativeInteger(entry.target)
   };
 
   const nextItem: SavedScenario = {
@@ -119,7 +121,7 @@ function sanitizeScenario(value: unknown): SavedScenario | null {
 
   const pool = normalizePool(candidate.pool);
   const goalType = sanitizeGoalType(candidate.goalType);
-  const target = Math.max(0, Math.trunc(Number(candidate.target ?? 0)));
+  const target = normalizeNonNegativeInteger(Number(candidate.target ?? 0));
 
   return {
     id: typeof candidate.id === "string" ? candidate.id : createId(),
@@ -138,7 +140,7 @@ function sanitizeScenario(value: unknown): SavedScenario | null {
 }
 
 function sanitizeGoalType(value: string): GoalType {
-  if (value === "atLeast" || value === "exactly" || value === "atMost" || value === "distribution") {
+  if (isGoalType(value)) {
     return value;
   }
 
