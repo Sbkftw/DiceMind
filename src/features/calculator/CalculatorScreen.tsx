@@ -133,6 +133,12 @@ export function CalculatorScreen() {
     }
   }
 
+  function adjustTarget(delta: number) {
+    const nextTarget = Math.max(0, target + delta);
+    setTarget(nextTarget);
+    setTargetInput(`${nextTarget}`);
+  }
+
   return (
     <main className="page-shell">
       <section className="hero">
@@ -266,16 +272,36 @@ export function CalculatorScreen() {
 
         <label className="field">
           <span>Valeur cible</span>
-          <input
-            type="text"
-            inputMode="numeric"
-            pattern="[0-9]*"
-            value={targetInput}
-            onChange={(event) => handleTargetChange(event.target.value)}
-            onBlur={commitTargetInput}
-            onFocus={(event) => event.currentTarget.select()}
-            disabled={goalType === "distribution"}
-          />
+          <div className="target-stepper">
+            <button
+              type="button"
+              className="target-stepper-button"
+              onClick={() => adjustTarget(-1)}
+              disabled={goalType === "distribution"}
+              aria-label="Réduire la cible"
+            >
+              -
+            </button>
+            <input
+              type="text"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              value={targetInput}
+              onChange={(event) => handleTargetChange(event.target.value)}
+              onBlur={commitTargetInput}
+              onFocus={(event) => event.currentTarget.select()}
+              disabled={goalType === "distribution"}
+            />
+            <button
+              type="button"
+              className="target-stepper-button"
+              onClick={() => adjustTarget(1)}
+              disabled={goalType === "distribution"}
+              aria-label="Augmenter la cible"
+            >
+              +
+            </button>
+          </div>
         </label>
       </section>
 
