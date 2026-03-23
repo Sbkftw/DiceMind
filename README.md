@@ -92,6 +92,42 @@ http://192.168.1.42:5173
 
 Le téléphone et le PC doivent être sur le même réseau Wi-Fi.
 
+## Déploiement sur Cloudflare Pages
+
+Cette app est un très bon candidat pour Cloudflare Pages : c'est un frontend statique Vite, sans backend.
+
+Configuration recommandée dans Cloudflare Pages :
+
+- Framework preset : `React (Vite)`
+- Build command : `npm run build`
+- Build output directory : `dist`
+- Root directory : laisser vide si ce repo ne devient pas un monorepo
+
+Le projet contient déjà [public/_redirects](./public/_redirects) pour forcer le fallback vers `index.html`. C'est utile si l'app utilise plus tard des routes côté client, et ça ne gêne pas le déploiement actuel.
+
+### Étapes
+
+1. Pousser le repo sur GitHub.
+2. Dans Cloudflare, ouvrir `Workers & Pages`.
+3. Choisir `Create application` puis `Pages`.
+4. Importer le dépôt GitHub.
+5. Vérifier les paramètres de build :
+   `npm run build` et `dist`
+6. Lancer le premier déploiement.
+
+Une fois le site déployé, Cloudflare fournira une URL du type :
+
+```text
+https://mordak-dice-odds.pages.dev
+```
+
+Chaque `git push` sur la branche de production déclenchera un nouveau build.
+
+### Sources
+
+- Cloudflare Pages build config : https://developers.cloudflare.com/pages/configuration/build-configuration/
+- Cloudflare Pages redirects : https://developers.cloudflare.com/pages/configuration/redirects/
+
 ## Structure actuelle
 
 ```text
